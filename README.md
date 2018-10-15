@@ -5,6 +5,14 @@ JSON::Encode - It's new $module
 # SYNOPSIS
 
     use JSON::Encode;
+    use Types::Standard -types;
+
+    my $type = Dict[name => Str, age => Int];
+
+    my $json = JSON::Encode->new;
+    my $code = $json->encoder($type);
+
+    $code->({ name => 'Perl', age => 30 });
 
 # DESCRIPTION
 
@@ -12,11 +20,11 @@ JSON::Encode is ...
 
 # LICENSE
 
-Copyright (C) Kenta, Kobayashi.
+Copyright (C) kfly8.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 # AUTHOR
 
-Kenta, Kobayashi <kentafly88@gmail.com>
+kfly8 <kfly@cpan.org>
