@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : 2
    },
-   "name" : "JSON-Encode",
+   "name" : "JSON-TypeEncoder",
    "no_index" : {
       "directory" : [
          "t",
@@ -55,13 +55,13 @@
    "release_status" : "unstable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com/kfly8/p5-JSON-Encode/issues"
+         "web" : "https://github.com/kfly8/p5-JSON-TypeEncoder/issues"
       },
-      "homepage" : "https://github.com/kfly8/p5-JSON-Encode",
+      "homepage" : "https://github.com/kfly8/p5-JSON-TypeEncoder",
       "repository" : {
          "type" : "git",
-         "url" : "git://github.com/kfly8/p5-JSON-Encode.git",
-         "web" : "https://github.com/kfly8/p5-JSON-Encode"
+         "url" : "git://github.com/kfly8/p5-JSON-TypeEncoder.git",
+         "web" : "https://github.com/kfly8/p5-JSON-TypeEncoder"
       }
    },
    "version" : "0.01",

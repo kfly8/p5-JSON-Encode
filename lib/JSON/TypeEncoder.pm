@@ -1,4 +1,4 @@
-package JSON::Encode;
+package JSON::TypeEncoder;
 use 5.008001;
 use strict;
 use warnings;
@@ -114,23 +114,23 @@ __END__
 
 =head1 NAME
 
-JSON::Encode - It's new $module
+JSON::TypeEncoder - It's new $module
 
 =head1 SYNOPSIS
 
-    use JSON::Encode;
+    use JSON::TypeEncoder;
     use Types::Standard -types;
 
     my $type = Dict[name => Str, age => Int];
 
-    my $json = JSON::Encode->new;
+    my $json = JSON::TypeEncoder->new;
     my $code = $json->encoder($type);
 
     $code->({ name => 'Perl', age => 30 });
 
 =head1 DESCRIPTION
 
-JSON::Encode is ...
+JSON::TypeEncoder is ...
 
 =head1 LICENSE
 

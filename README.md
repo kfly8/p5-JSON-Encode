@@ -1,22 +1,22 @@
 # NAME
 
-JSON::Encode - It's new $module
+JSON::TypeEncoder - It's new $module
 
 # SYNOPSIS
 
-    use JSON::Encode;
+    use JSON::TypeEncoder;
     use Types::Standard -types;
 
     my $type = Dict[name => Str, age => Int];
 
-    my $json = JSON::Encode->new;
+    my $json = JSON::TypeEncoder->new;
     my $code = $json->encoder($type);
 
     $code->({ name => 'Perl', age => 30 });
 
 # DESCRIPTION
 
-JSON::Encode is ...
+JSON::TypeEncoder is ...
 
 # LICENSE
 

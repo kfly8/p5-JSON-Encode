@@ -1,4 +1,4 @@
-name = "JSON-Encode"
+name = "JSON-TypeEncoder"
 # badges = ["travis"]
 module_maker="ModuleBuildTiny"
 static_install = "auto"

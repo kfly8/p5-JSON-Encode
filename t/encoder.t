@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 
-use JSON::Encode;
+use JSON::TypeEncoder;
 use Types::Standard -types;
 
 my @test = (
@@ -86,7 +86,7 @@ my @test = (
 
 for (@test) {
     my ($type, $obj, $json_str) = @$_;
-    my $json = JSON::Encode->new;
+    my $json = JSON::TypeEncoder->new;
     my $code = $json->encoder($type);
 
     my $r = is $code->($obj), $json_str, $type->display_name;
