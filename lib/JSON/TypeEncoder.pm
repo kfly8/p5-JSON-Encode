@@ -60,11 +60,30 @@ sub _json_src_dict {
     my ($self, $obj_src, $type) = @_;
     my @src;
     my %types = @{$type->parameters};
-    for my $key (sort keys %types) {
-        my $src = $self->_json_src("${obj_src}->{$key}", $types{$key}, !!1);
-        push @src => sprintf(q!"%s":%s!, $key, $src)
+    my @keys = sort keys %types;
+    for (my $i = 0; $i < @keys; $i++) {
+        my $key      = $keys[$i];
+        my $stype    = $types{$key};
+        my $sobj_src = "${obj_src}->{$key}";
+
+        my $optional;
+        if (_is_subtype($stype, Optional)) {
+            $stype = $stype->parameters->[0];
+            $optional = !!1;
+        }
+
+        my $value_src = $self->_json_src($sobj_src, $stype, !!1);
+        my $comma     = $i == 0 ? '' : ',';
+        my $src       = qq!$comma"$key":$value_src!;
+
+        if ($optional) {
+            $src = qq!' . (exists($sobj_src) ? '$src' : '') . '!
+        }
+
+        push @src => $src;
     }
-    sprintf(q!'{%s}'!, join ",", @src);
+
+    sprintf(q!'{%s}'!, join "", @src);
 }
 
 sub _json_src_tuple {

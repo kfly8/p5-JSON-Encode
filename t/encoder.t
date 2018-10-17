@@ -22,6 +22,11 @@ my @test = (
     [ Dict[name => Str], { name => 'hello' }, '{"name":"hello"}' ],
     [ Dict[name => Maybe[Str]], { name => 'hello' }, '{"name":"hello"}' ],
     [ Dict[name => Maybe[Str]], { name => undef }, '{"name":null}' ],
+    [ Dict[name => Optional[Str]], { name => 'hello' }, '{"name":"hello"}' ],
+    [ Dict[name => Optional[Str]], {}, '{}' ],
+    [ Dict[name => Optional[Maybe[Str]]], { name => 'hello' }, '{"name":"hello"}' ],
+    [ Dict[name => Optional[Maybe[Str]]], { name => undef }, '{"name":null}' ],
+    [ Dict[name => Optional[Maybe[Str]]], {}, '{}' ],
 
     [ Dict[age => Int], { age => 123 }, '{"age":123}' ],
     [ Dict[age => Int], { age => '123' }, '{"age":123}' ],
@@ -81,6 +86,21 @@ my @test = (
         },
         '{"tuple":[123,"foo",["a","b","c"]]}'
     ],
+
+    [
+        ArrayRef[
+            Dict[
+                foo => Optional[Str], bar => Maybe[Num]
+            ]
+        ],
+        [
+            { foo => '1', bar => '10' },
+            {             bar => '11' },
+            { foo => '2', bar => undef },
+            {             bar => undef },
+        ],
+        '[{"bar":10,"foo":"1"},{"bar":11},{"bar":null,"foo":"2"},{"bar":null}]'
+    ]
 
 );
 
