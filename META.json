@@ -65,6 +65,7 @@
       }
    },
    "version" : "0.01",
+   "x_authority" : "cpan:KFLY",
    "x_contributors" : [
       "Kenta, Kobayashi <kentafly88@gmail.com>"
    ],

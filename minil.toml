@@ -1,5 +1,9 @@
 name = "JSON-TypeEncoder"
-# badges = ["travis"]
+badges = ["travis", "coveralls", "metacpan"]
+authority="cpan:KFLY"
+
 module_maker="ModuleBuildTiny"
 static_install = "auto"
+markdown_maker = "Pod::Markdown::Github"
+
 
