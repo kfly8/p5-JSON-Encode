@@ -25,14 +25,6 @@ sub encoder {
 }
 
 sub _json_src {
-    my ($self, $obj_src, $type, $wrapped) = @_;
-
-    my $src = $self->_json_src_any($obj_src, $type);
-    $src = qq!' . ($src) . '! if $wrapped;
-    return $src;
-}
-
-sub _json_src_any {
     my ($self, $obj_src, $type) = @_;
 
     my $maybe;
@@ -72,9 +64,9 @@ sub _json_src_dict {
             $optional = !!1;
         }
 
-        my $value_src = $self->_json_src($sobj_src, $stype, !!1);
+        my $value_src = $self->_json_src($sobj_src, $stype);
         my $comma     = $i == 0 ? '' : ',';
-        my $src       = qq!$comma"$key":$value_src!;
+        my $src       = qq!$comma"$key":' . ($value_src) . '!;
 
         if ($optional) {
             $src = qq!' . (exists($sobj_src) ? '$src' : '') . '!
@@ -91,7 +83,8 @@ sub _json_src_tuple {
     my @src;
     my @types = @{$type->parameters};
     for my $i (0 .. $#types) {
-        my $src = $self->_json_src("${obj_src}->[$i]", $types[$i], !!1);
+        my $src = $self->_json_src("${obj_src}->[$i]", $types[$i]);
+        $src = qq!' . ($src) . '!;
         push @src => $src;
     }
     sprintf(q!'[%s]'!, join ",", @src);
@@ -101,7 +94,7 @@ sub _json_src_arrayref {
     my ($self, $obj_src, $type) = @_;
     my @src;
     my $stype = $type->parameters->[0];
-    my $src = $self->_json_src_any('$_', $stype);
+    my $src = $self->_json_src('$_', $stype);
     sprintf(q!'[' . (do {my $src; for (@{%s}) { $src .= (%s) . ',' }; substr($src,0,-1) }) . ']'!, $obj_src, $src);
 }
 
@@ -146,6 +139,7 @@ JSON::TypeEncoder - It's new $module
     my $code = $json->encoder($type);
 
     $code->({ name => 'Perl', age => 30 });
+    # => {"age":30,"name":"Perl"}
 
 =head1 DESCRIPTION
 
