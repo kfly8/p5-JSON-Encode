@@ -20,7 +20,7 @@ sub encoder {
     }', $self->_json_src('$obj', $type));
 
     my $code = eval $src; ## no critic
-    die "src: $src,\n error: $@" if $@;
+    die "error string eval: $@, src: $src" if $@;
     return $code;
 }
 
@@ -126,7 +126,7 @@ __END__
 
 =head1 NAME
 
-JSON::TypeEncoder - It's new $module
+JSON::TypeEncoder - serialize JSON using type information
 
 =head1 SYNOPSIS
 
@@ -136,14 +136,152 @@ JSON::TypeEncoder - It's new $module
     my $type = Dict[name => Str, age => Int];
 
     my $json = JSON::TypeEncoder->new;
-    my $code = $json->encoder($type);
+    my $encode = $json->encoder($type);
 
-    $code->({ name => 'Perl', age => 30 });
+    $encode->({ name => 'Perl', age => 30 });
     # => {"age":30,"name":"Perl"}
 
 =head1 DESCRIPTION
 
-JSON::TypeEncoder is ...
+JSON::TypeEncoder serialize Perl data structures to JSON using type information.
+This module goal is to be B<correct> and B<fast>.
+
+=head2 FEATURES
+
+=head3 Correct
+
+This module encodes according to the specified type information.
+For example, it encodes as following:
+
+    use JSON::TypeEncoder;
+    use Types::Standard -types;
+
+    my $e = JSON::TypeEncoder->new;
+
+    my $s = $e->encoder(Dict[str => Str]);
+    $s->({str => 123}); # => {"str":"123"}
+
+    my $i = $e->encoder(Dict[int => Int]);
+    $i->({int => '456'}); # => {"int":456}
+
+    my $b = $e->encoder(Dict[fg => Bool]);
+    $b->({fg => !!0}); # => {"fg":false}
+
+This will prevent unintended encoding.
+
+=head3 Fast
+
+Encoding performance is improved by string eval using type information.
+You can get speed comparable to JSON::XS. The results of a simple benchmark is as following:
+
+    use Benchmark qw(cmpthese);
+
+    use JSON::XS qw(encode_json);
+    use JSON::TypeEncoder;
+    use JSON::Types;
+
+    use Types::Standard -types;
+    my $type = Dict[name => Str, age => Int];
+    my $encode = JSON::TypeEncoder->new->encoder($type);
+
+    cmpthese -1, {
+        'JSON::XS'          => sub { encode_json({ name => 'Perl', age => 30 }) },
+        'JSON::TypeEncoder' => sub { $encode->({ name => 'Perl', age => 30 }) },
+        'JSON::XS w/ Types' => sub { encode_json({ name => string 'Perl', age => number 30 }) },
+    };
+
+    #                        Rate JSON::XS w/ Types         JSON::XS JSON::TypeEncoder
+    # JSON::XS w/ Types  869501/s                --             -32%              -48%
+    # JSON::XS          1279827/s               47%               --              -24%
+    # JSON::TypeEncoder 1679704/s               93%              31%                --
+
+=head3 Pure Perl
+
+This module is written by pure Perl. So you can easily install it.
+
+=head2 TYPE SPECIFICATION
+
+L<Types::Standard> is used for type specification.
+The basic types are as follows, you can specify the type of JSON by this combination.
+
+=head3 Example
+
+    use Types::Standard -types;
+    use JSON::TypeEncoder;
+
+    my $type = ArrayRef[
+        Dict[
+            name => Str,
+            fg => Bool,
+            foo => Optional[Str],
+            bar => Maybe[Num]
+        ]
+    ];
+
+    my $encode = JSON::TypeEncoder->new->encoder($type);
+    $encode->(
+        [
+            { name => 'a', fg => !!1, foo => '1', bar => '10' },
+            { name => 'b', fg => !!0,             bar => '11' },
+            { name => 'c', fg => !!1, foo => '2', bar => undef },
+            { name => 'd', fg => !!0,             bar => undef },
+        ]
+    );
+
+    # =>
+    # [
+    #   {"bar":10,"fg":true,"foo":"1","name":"a"},
+    #   {"bar":11,"fg":false,"name":"b"},
+    #   {"bar":null,"fg":true,"foo":"2","name":"c"},
+    #   {"bar":null,"fg":false,"name":"d"}
+    # ]
+
+=head3 Basic Types
+
+=over
+
+=item C<< Str >>
+
+Subtype of C<< Str >> type encodes always to string.
+
+=item C<< Num >>
+
+Subtype of C<< Num >> type encodes always to number.
+
+=item C<< Bool >>
+
+Subtype of C<< Bool >> type encodes always to boolean.
+
+=item C<< Dict[...] >>
+
+Subtype of C<< Dict[...] >> encodes always to map.
+
+=item C<< Tuple[...] >>
+
+Subtype of C<< Tuple[A, B] >> encodes always to list of type A and B.
+
+=item C<< ArrayRef[`a] >>
+
+Subtype of C<< ArrayRef[A] >> encodes always to list of all elements type A.
+
+=item C<< Maybe >>
+
+C<< Maybe >> encodes to undef if value is undef.
+
+=item C<< Optional[`a] >>
+
+C<< Dict[name => Str, id => Optional[Int]] >> allows C<< { name => "Bob" } >>
+but not C<< { name => "Bob", id => "BOB" } >>.
+
+=back
+
+=head1 SEE ALSO
+
+L<JSON::XS>
+
+L<JSON::Types>
+
+L<Types::Standard>
 
 =head1 LICENSE
 

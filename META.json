@@ -1,5 +1,5 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "serialize JSON using type information",
    "author" : [
       "kfly8 <kfly@cpan.org>"
    ],
