@@ -4,6 +4,8 @@ use strict;
 use warnings;
 
 use Types::Standard -types;
+use JavaScript::Value::Escape;
+use Encode qw(encode_utf8);
 
 our $VERSION = "0.01";
 
@@ -21,7 +23,11 @@ sub encoder {
 
     my $code = eval $src; ## no critic
     die "error string eval: $@, src: $src" if $@;
-    return $code;
+    return sub {
+        my ($value) = @_;
+        $type->assert_valid($value);
+        $code->($value);
+    }
 }
 
 sub _json_src {
@@ -100,7 +106,7 @@ sub _json_src_arrayref {
 
 sub _json_src_str {
     my ($self, $value_src) = @_;
-    qq!'"' . $value_src . '"'!
+    qq!'"' . encode_utf8(javascript_value_escape($value_src)) . '"'!
 }
 
 sub _json_src_num {
