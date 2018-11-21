@@ -222,3 +222,7 @@ it under the same terms as Perl itself.
 # AUTHOR
 
 kfly8 <kfly@cpan.org>
+
+# CONTRIBUTORS
+
+- karupanerura

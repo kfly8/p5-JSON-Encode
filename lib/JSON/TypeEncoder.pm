@@ -324,5 +324,13 @@ it under the same terms as Perl itself.
 
 kfly8 E<lt>kfly@cpan.orgE<gt>
 
+=head1 CONTRIBUTORS
+
+=over
+
+=item karupanerura
+
+=back
+
 =cut
 
